@@ -1,1 +1,1 @@
-go test ./httpservice/main/ ./dataaccess/ -cover
+go test ./... -cover

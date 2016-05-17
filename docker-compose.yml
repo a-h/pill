@@ -1,0 +1,20 @@
+---
+version: '2'
+services:
+  mongo:
+    image: mongo
+    expose:
+    - "27017"
+
+
+  pill:
+    build:
+      context: .
+      args:
+      -  HTTP_PROXY=$DOCKER_HTTP_PROXY
+      -  HTTPS_PROXY=$DOCKER_HTTPS_PROXY
+      -  NO_PROXY=$DOCKER_NO_PROXY
+    ports:
+      - "8080:8080"
+    depends_on:
+    - mongo

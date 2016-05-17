@@ -10,13 +10,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var connectionString = flag.String("connectionString", "mongodb://localhost:27017",
+var connectionString = flag.String("connectionString", "mongodb://mongo:27017",
 	"The MongoDB connection string used to store data.")
 
 func main() {
+	log.Print("Starting up...")
 	flag.Parse()
 
+	log.Print("Creating routes...")
 	r := createRoutes(dataaccess.NewMongoDataAccess(*connectionString))
+
+	log.Print("Serving...")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
