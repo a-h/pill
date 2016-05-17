@@ -1,0 +1,22 @@
+{{template "header"}}
+{{template "navigation" .}}
+    <div class="container">
+      <h2>Skill Profile</h2>
+
+      <p class="lead">Login with your Google Account</p>
+
+      <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+
+      <script>
+        function onSignIn(googleUser) {
+          var id_token = googleUser.getAuthResponse().id_token;
+          $("#id_token").val(id_token);
+          $("#login_form").submit()
+        };
+      </script>
+
+      <form id="login_form" method="post">
+          <input type="hidden" id="id_token" name="id_token"/>
+      </form>
+    </div>
+{{template "footer"}}

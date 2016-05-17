@@ -1,0 +1,155 @@
+{{template "header"}}
+{{template "navigation" .}}
+    <div class="container">
+      <h2>Skill Profile</h2>
+
+      <p>
+        Let's start by finding out what skills you have, or want to work on.
+      </p>
+
+      <p>
+        Enter a skill, then press <kbd>tab</kbd>
+      </p>
+
+      <form>
+        <div class="form-group">
+          <input type="text" id="skills" name="skills" placeholder="skill" class="form-control" value="{{ .Skills }}"/>
+        </div>
+      </form>
+
+      <form id="skillInputForm" method="POST">
+        <div class="form-group">
+            <label for="availability" style="clear: right">Availability</label>
+
+            <div style="margin-left : 24px; clear:both;">
+              <input id="availability" name="availability" type="text" data-slider-min="1" data-slider-max="3" data-slider-step="1" data-slider-value="2" data-slider-ticks-labels='["Red", "Amber", "Green"]' value="{{ .Profile.Availability }}" />
+            </div>
+        </div>
+
+        <table id="skillInput" class="table table-striped toggleForm" style="display : none;">
+          <tr>
+            <th>Skill</th>
+            <th>Level</th>
+            <th>Interest</th>
+            <th>&nbsp;</th>
+          </tr>
+          {{ range $index, $skill := .Profile.Skills }}
+            <tr>
+              <th><span class="tagName">{{ $skill.Skill }}</span><input type="hidden" name="name_{{ $index }}" value="{{ $skill.Skill }}" class="tagNameInput"/></th>
+              <td><input class="tagLevel" type="text" name="level_{{ $index }}" value="{{ $skill.Level }}" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="{{ $skill.Level }}"/></td>
+              <td><input class="tagInterest" type="text" name="interest_{{ $index }}" value="{{ $skill.Interest }}" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="{{ $skill.Interest }}"/></td>
+              <td><button type="button" class="btn btn-danger tagDelete">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                  </button>
+              </td>
+            </tr>
+          {{ end }}
+        </table>
+
+        <div class="form-group">
+          <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
+      </form>
+
+      <script id="data-entry-template" type="text/x-custom-template">
+      <tr>
+        <th><span class="tagName">&nbsp;</span><input type="hidden" name="tagName" class="tagNameInput"/></th>
+        <td><input class="tagLevel" type="text" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="3"/></td>
+        <td><input class="tagInterest" type="text" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="3"/></td>
+        <td><button type="button" class="btn btn-danger tagDelete">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+            </button>
+        </td>
+      </tr>
+      </script>
+    </div>
+
+    <script type="text/javascript">
+      function createTableEntry(tag) {
+        var milliseconds = (new Date).getTime();
+
+        var template = $($("#data-entry-template").html());
+
+        $(".tagName", template).text(tag);
+        $(".tagNameInput", template)
+          .attr("name", "name_" + milliseconds)
+          .val(tag);
+        $
+
+        // Setup the sliders.
+        $(".tagLevel", template)
+          .attr("name", "level_" + milliseconds)
+          .slider();
+        $(".tagInterest", template)
+          .attr("name", "interest_" + milliseconds)
+          .slider();
+
+        $(".tagDelete", template).click(function() {
+          $(this).closest("tr").remove();
+          toggleForm();
+        });
+
+        $("#skillInput").append(template);
+        toggleForm();
+      }
+
+      function removeTableEntry(tag) {
+        $("input[type='hidden']", "#skillInput").each(function(idx, o) {
+          if($(o).val() == tag) {
+            $(o).closest("tr").remove();
+          }
+        });
+
+        toggleForm();
+      }
+
+      function toggleForm() {
+        if($("tr", "#skillInput").length > 1) {
+          $(".toggleForm").show()
+        }
+        else {
+          $(".toggleForm").hide()
+        }
+      }
+
+      $(document).ready(function() {
+        var tagApi = $("#skills").tagsManager({
+          prefilled: "{{ .Skills }}".split(",")
+        });
+        $("#skills").focus();
+
+        // Set a slider on availability.
+        $("#availability").slider({
+            ticks: [1, 2, 3],
+            ticks_labels: ['Red', 'Amber', 'Green'],
+            ticks_snap_bounds: 1,
+            value: {{ .Profile.Availability }}
+        });
+
+        // Make the form change when the skills are modified.
+        $("#skills").on('tm:pushed', function(e, tag) {
+          createTableEntry(tag)
+        });
+
+        $("#skills").on('tm:spliced', function(e, tag) {
+          removeTableEntry(tag);
+        })
+
+        // Configure the exisitng profile controls.
+        // Show the form if there's any skills.
+        toggleForm();
+
+        var skillInputTable = $("#skillInput");
+
+        $(".tagLevel", skillInputTable)
+          .slider();
+        $(".tagInterest", skillInputTable)
+          .slider();
+
+        $(".tagDelete", skillInputTable).click(function() {
+          $(this).closest("tr").remove();
+          toggleForm();
+        });
+      });
+    </script>
+{{template "footer"}}

@@ -1,0 +1,38 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    <!-- Sign in -->
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="489512678547-4sjor5burp1vm674nf4qpd7erv34vdpl.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    <!-- Tag input -->
+    <link rel="stylesheet" href="/static/tagmanager/tagmanager.css">
+    <script src="/static/tagmanager/tagmanager.js"></script>
+
+    <!-- Sliders -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.0.2/bootstrap-slider.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.0.2/css/bootstrap-slider.css">
+
+    <!-- Set the active navigation item. -->
+    <script type="text/javascript">
+      //
+      $(document).ready(function () {
+        $.each($('.navbar').find('li'), function() {
+            $(this).toggleClass('active',
+                $(this).find('a').attr('href') == window.location.pathname);
+        });
+      });
+    </script>
+  </head>
+  <body>
+{{end}}

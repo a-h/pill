@@ -1,0 +1,87 @@
+{{template "header"}}
+{{template "navigation" .}}
+    <div class="container">
+      <h2>Report</h2>
+
+      <p>
+        Filter the list by entering a skill and pressing <kbd>tab</kbd>
+      </p>
+
+      <form>
+        <div class="form-group">
+          <input type="text" id="skills" name="skills" placeholder="skill" class="form-control" />
+        </div>
+      </form>
+
+      <table id="reportTable" class="table table-condensed table-hover">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Name</th>
+            {{ range $skillIndex, $skillName := .SkillNames }}
+              <th>{{$skillName}}</th>
+            {{ end }}
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $index, $profile := .Profiles }}
+          <tr>
+            <td><div style="width : 10px; height : 10px" class="{{getavailabilitystyle $profile.Availability}}">&nbsp;</div></td>
+            <td><a href="mailto:{{$profile.EmailAddress}}">{{$profile.EmailAddress}}</a></td>
+            {{ range $skillIndex, $skill := .Skills }}
+              {{ if $skill }}
+              <td data-skill="{{ $skill.Skill }}">
+                <div class="progress skill">
+                  <div class="progress-bar progress-bar-striped" style="width: {{getlevelpc $skill.Level }}%">
+                    <span class="sr-only">Skill Level {{ $skill.Level }}%</span>
+                  </div>
+                </div>
+                <div class="progress interest">
+                  <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{getlikertpc $skill.Interest }}%">
+                    <span class="sr-only">Interest Level {{ $skill.Interest }}%</span>
+                  </div>
+                </div>
+              </td>
+              {{ end }}
+            {{ end }}
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+
+    <script type="text/javascript">
+      function filterReport() {
+        var tags = $("#skills").tagsManager('tags');
+
+        $("tbody > tr", "#reportTable").each(function() {
+          var matchedSkills = 0;
+          $("td[data-skill]", this).each(function() {
+            if($.inArray($(this).attr("data-skill"), tags) > -1) {
+              matchedSkills ++;
+            }
+          });
+
+          if(matchedSkills == tags.length) {
+            $(this).show();
+          }
+          else {
+            $(this).hide();
+          }
+        });
+      }
+
+      $(document).ready(function() {
+        var tagApi = $("#skills").tagsManager();
+        $("#skills").focus();
+
+        $("#skills").on('tm:pushed', function(e, tag) {
+          filterReport();
+        });
+
+        $("#skills").on('tm:spliced', function(e, tag) {
+          filterReport();
+        })
+      });
+    </script>
+{{template "footer"}}
