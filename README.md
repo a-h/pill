@@ -20,3 +20,25 @@ To rebuild the application stack in the container, use `docker-compose build pil
 * The `docker-compose.yml` contains a port-forwarding rule to forward 8080 on the container host to port 8080 on the guest.
   * If you're running on Windows, you will also need to configure VirtualBox to setup port-forwarding on your boot2docker VirtualBox instance.
 * The default connection string is to connect to the `mongo` service on `mongodb://mongo:27017`.
+
+# Configuring the service in AWS.
+* Setup Elastic Container Service (AWS ECS) from the console in
+* Setup an Elastic Container Repository (AWS ECR) in AWS.
+* Create a role you will use to manage the "pill" service.
+  * It will be a "Role for Cross-Account Access"
+* Attach the following policies to the role:
+  * AmazonEC2ContainerRegistryFullAccess
+  * AmazonEC2ContainerServiceRole
+* Assign your management user to the role.
+
+# Build the container and put it in the repository
+* Login
+  * `aws ecr get-login --region eu-west-1`
+    * If you get a missing pipe, you're probably using the Windows command shell, switch to the docker quickstart terminal.
+    * If you have trouble with proxies, see https://github.com/docker/toolbox/issues/102#issuecomment-154900769
+* Build
+  * `docker build -t pill .` (see above)
+* Tag
+  * `docker tag pill:latest 180466524585.dkr.ecr.us-east-1.amazonaws.com/pill:latest`
+* Push
+  * `docker push 180466524585.dkr.ecr.us-east-1.amazonaws.com/pill:latest`
