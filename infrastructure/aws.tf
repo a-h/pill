@@ -296,7 +296,7 @@ resource "aws_elb" "skills_elb" {
     healthy_threshold = 2
     unhealthy_threshold = 8
     timeout = 3
-    target = "HTTP:8080/establishment/"
+    target = "HTTP:8080/"
     interval = 10
   }
 

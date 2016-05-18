@@ -14,3 +14,11 @@ sudo pip install awscli
 yum install -y chrony
 sudo systemctl enable chronyd
 sudo systemctl start chronyd
+# Setup Corkscrew for SSH access through proxies
+sudo yum install -y git gcc
+cd ~
+git clone https://github.com/elia/corkscrew
+cd corkscrew
+./configure
+make
+make install

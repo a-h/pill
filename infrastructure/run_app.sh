@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo yum -y install git
 curl -O https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz
 tar -C /usr/local -xzf go1.6.2.linux-amd64.tar.gz
 sudo bash -c 'echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile.d/go-tools.sh'
