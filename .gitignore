@@ -1,3 +1,6 @@
 coverage_*.html
 .*.out
 *.exe
+.vagrant
+*.tfstate*
+*.pem
