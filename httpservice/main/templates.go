@@ -8,7 +8,7 @@ import (
 	"github.com/a-h/pill/dataaccess"
 )
 
-var templates = template.Must(template.New("").Funcs(funcMap).ParseFiles("templates/header.html",
+var templates = template.Must(template.New("").Funcs(templateFunctions).ParseFiles("templates/header.html",
 	"./templates/navigation.html",
 	"./templates/login.html",
 	"./templates/profile.html",
@@ -16,7 +16,7 @@ var templates = template.Must(template.New("").Funcs(funcMap).ParseFiles("templa
 	"./templates/footer.html"))
 
 // Register the functions required to render the templates.
-var funcMap = template.FuncMap{
+var templateFunctions = template.FuncMap{
 	"getlevelpc":           getlevelpc,
 	"getlikertpc":          getlikertpc,
 	"getavailabilitystyle": getavailabilitystyle,

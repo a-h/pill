@@ -165,6 +165,7 @@ func (da MongoDataAccess) DeleteProfile(emailAddress string) (bool, error) {
 	return true, nil
 }
 
+// ListProfiles lists all of the profiles stored in the database.
 func (da MongoDataAccess) ListProfiles() ([]Profile, error) {
 	session, err := mgo.Dial(da.connectionString)
 	if err != nil {

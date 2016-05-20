@@ -4,14 +4,14 @@ package dataaccess
 type DreyfusLevel int
 
 const (
-	// Novice people might have read about it.
-	Novice = 1
-	// Competent people might have used it.
-	Competent = 2
-	// Proficient people might have used it a lot.
-	Proficient = 3
-	// Expert people might have written about it.
-	Expert = 4
-	// Master level people might have taught others about it.
-	Master = 5
+	// NoviceLevel people might have read about it.
+	NoviceLevel = 1
+	// CompetentLevel people might have used it.
+	CompetentLevel = 2
+	// ProficientLevel people might have used it a lot.
+	ProficientLevel = 3
+	// ExpertLevel people might have written about it.
+	ExpertLevel = 4
+	// MasterLevel people might have taught others about it.
+	MasterLevel = 5
 )

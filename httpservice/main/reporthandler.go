@@ -89,11 +89,17 @@ func handleReportGet(w http.ResponseWriter, r *http.Request, handler ReportHandl
 	renderTemplate(w, "report.html", model)
 }
 
+// ReportModel provides data to the Report View.
 type ReportModel struct {
 	SkillNames []string
 	Profiles   []ProfileSkills
 }
 
+// ProfileSkills provides information about a person's skills in a matrix
+// format suitable for display. The ReportHandler produces a ReportModel
+// which has a Skills property containing a list of all skills. The Skills
+// array in this type has the same number of elements as the parent ReportModel's
+// SkillNames properties, with some of the values being empty.
 type ProfileSkills struct {
 	EmailAddress string
 	Availability dataaccess.RagStatus

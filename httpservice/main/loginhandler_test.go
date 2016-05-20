@@ -2,28 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
 	"time"
 )
-
-type mockSession struct {
-	validateSessionValidResponse        bool
-	validateSessionEmailAddressResponse string
-	startSessionWasCalled               bool
-}
-
-func (ms mockSession) ValidateSession() (isValid bool, emailAddress string) {
-	return ms.validateSessionValidResponse, ms.validateSessionEmailAddressResponse
-}
-
-func (ms *mockSession) StartSession(emailAddress string) {
-	log.Print("The session was started.")
-	ms.startSessionWasCalled = true
-}
 
 func TestThatAValidSessionRedirectsToTheProfile(t *testing.T) {
 	ms := &mockSession{
