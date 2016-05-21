@@ -1,25 +1,22 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
-	"strconv"
-	"time"
+
+	"github.com/a-h/pill/tokenverifier"
 )
 
 // The LoginHandler renders the logon screen and redirects to the profile, once
 // the session has been setup.
 type LoginHandler struct {
-	getSession func(w http.ResponseWriter, r *http.Request) Session
+	getSession    func(w http.ResponseWriter, r *http.Request) Session
+	TokenVerifier tokenverifier.TokenVerifier
 }
 
 // NewLoginHandler creates an instance of the LoginHandler.
-func NewLoginHandler(sessionFactory func(w http.ResponseWriter, r *http.Request) Session) *LoginHandler {
-	return &LoginHandler{sessionFactory}
+func NewLoginHandler(sessionFactory func(w http.ResponseWriter, r *http.Request) Session, verifier tokenverifier.TokenVerifier) *LoginHandler {
+	return &LoginHandler{sessionFactory, verifier}
 }
 
 func (handler LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -48,85 +45,15 @@ func handleLoginPost(w http.ResponseWriter, r *http.Request, handler LoginHandle
 	r.ParseForm()
 	idToken := r.FormValue("id_token")
 
-	url := "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + url.QueryEscape(idToken)
-	body, err := getResponse(url)
+	claim, err := handler.TokenVerifier.ValidateToken(idToken)
 
 	if err != nil {
-		http.Error(w, "Failed to receive a response from the Google validation service.", http.StatusInternalServerError)
-		return
-	}
-
-	claim := &claim{}
-	err = json.Unmarshal(body, claim)
-
-	if err != nil {
-		log.Print("Unable to understand the claim received from Google.", err)
-		http.Error(w, "Unable to connect to Google to validate the logon token.", http.StatusInternalServerError)
-		return
-	}
-
-	ok, errorMessage := isClaimValid(claim)
-
-	if !ok {
-		log.Print("The claim is invalid. ", errorMessage)
-		http.Error(w, "The presened claim is invalid.", http.StatusInternalServerError)
+		log.Printf("The claim %s is invalid. With error message %s", idToken, err.Error())
+		http.Error(w, "The presented claim is invalid.", http.StatusInternalServerError)
 		return
 	}
 
 	handler.getSession(w, r).StartSession(claim.Email)
 
 	http.Redirect(w, r, "/profile/", http.StatusFound)
-}
-
-func isClaimValid(claim *claim) (ok bool, msg string) {
-	expiry, expiryErr := strconv.Atoi(claim.Expiry)
-	emailVerified, emailVerifiedErr := strconv.ParseBool(claim.EmailVerified)
-
-	validation := map[string]bool{
-		"email ok":          claim.Email != "",
-		"email verified ok": emailVerifiedErr == nil && emailVerified,
-		"expiry is number":  expiryErr == nil,
-		"expiry ok":         time.Unix(int64(expiry), 0).After(time.Now()),
-		"issuer ok":         claim.Issuer == "https://accounts.google.com" || claim.Issuer == "accounts.google.com",
-	}
-
-	var errorMessage bytes.Buffer
-	ok = true
-	for k, v := range validation {
-		errorMessage.WriteString(string(k) + " " + strconv.FormatBool(v) + "\n")
-		ok = ok && v
-	}
-
-	return ok, errorMessage.String()
-}
-
-func getResponse(url string) ([]byte, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Print("Failed to retrieve the URL from google.", err)
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Print("Failed to receive the claim from Google.", err)
-		return nil, err
-	}
-
-	return body, nil
-}
-
-type claim struct {
-	// The issuer, should be "https://accounts.google.com" or "accounts.google.com"
-	Issuer string `json:"iss"`
-	// The expiry, e.g. "1433981953". Should not be in the past.
-	Expiry        string `json:"exp"`
-	Email         string `json:"email"` // e.g. "testuser@gmail.com",
-	EmailVerified string `json:"email_verified"`
-	Name          string `json:"name"`        // e.g. "Test User",
-	Picture       string `json:"picture"`     // e.g. "https://lh4.googleusercontent.com/-kYgzyAWpZzJ/ABCDEFGHI/AAAJKLMNOP/tIXL9Ir44LE/s99-c/photo.jpg",
-	GivenName     string `json:"given_name"`  // e.g. "Test"
-	FamilyName    string `json:"family_name"` // e.g. "User"
 }

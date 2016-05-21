@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/a-h/pill/dataaccess"
+	"github.com/a-h/pill/tokenverifier"
 	"github.com/gorilla/mux"
 )
 
@@ -27,7 +28,7 @@ func main() {
 func createRoutes(da dataaccess.DataAccess) *mux.Router {
 	r := mux.NewRouter()
 
-	lh := NewLoginHandler(createSession)
+	lh := NewLoginHandler(createSession, tokenverifier.GoogleTokenVerifier{})
 	r.Handle("/", lh)
 
 	ph := NewProfileHandler(da, createSession)
