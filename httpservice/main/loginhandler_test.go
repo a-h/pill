@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
@@ -36,6 +37,34 @@ func TestThatAValidSessionRedirectsToTheProfile(t *testing.T) {
 
 	if ms.startSessionWasCalled {
 		t.Error("The session should not have been started, because it's already valid.")
+	}
+}
+
+func TestThatAnInvalidSessionRendersTheLoginView(t *testing.T) {
+	ms := &mockSession{
+		validateSessionValidResponse:        false,
+		validateSessionEmailAddressResponse: "",
+		startSessionWasCalled:               false}
+
+	sf := func(w http.ResponseWriter, r *http.Request) Session {
+		return ms
+	}
+
+	lh := NewLoginHandler(sf)
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("GET", "http://example.com/login", nil)
+
+	lh.ServeHTTP(w, r)
+
+	if w.Code != http.StatusOK {
+		t.Error("The HTTP status code returned should be StatusOK because we're accessing the logon screen.")
+	}
+
+	body := w.Body.String()
+
+	if !strings.Contains(body, "Login with your Google Account") {
+		t.Error("The login view was not rendered.")
 	}
 }
 

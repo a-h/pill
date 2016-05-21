@@ -9,12 +9,13 @@ import (
 
 // The DataAccess interface defines how data is written to the data store.
 type DataAccess interface {
-	UpdateProfile(update *ProfileUpdate) (*Profile, error)
+	ListProfiles() ([]Profile, error)
 	GetProfile(emailAddress string) (*Profile, bool, error)
+	UpdateProfile(update *ProfileUpdate) (*Profile, error)
+	DeleteProfile(emailAddress string) (bool, error)
 	ListSkillTags() ([]string, error)
 	AddSkillTags(tags []string) error
-	DeleteProfile(emailAddress string) (bool, error)
-	ListProfiles() ([]Profile, error)
+	DeleteSkillTags(tags []string) error
 }
 
 // MongoDataAccess provides access to the data structures.
@@ -139,12 +140,15 @@ func (da MongoDataAccess) AddSkillTags(tags []string) error {
 
 	c := session.DB("pill").C("skills")
 
-	documents := make([]SkillTag, len(tags), len(tags))
-	for idx, tag := range tags {
-		documents[idx] = SkillTag{tag}
+	for _, tag := range tags {
+		_, err = c.UpsertId(tag, SkillTag{tag})
+
+		if err != nil {
+			return err
+		}
 	}
 
-	return c.Insert(documents)
+	return nil
 }
 
 // DeleteProfile removes a profile specified by email address.
@@ -183,4 +187,23 @@ func (da MongoDataAccess) ListProfiles() ([]Profile, error) {
 	}
 
 	return results, nil
+}
+
+// DeleteSkillTags deletes a set of tags from the database.
+func (da MongoDataAccess) DeleteSkillTags(tags []string) error {
+	session, err := mgo.Dial(da.connectionString)
+	if err != nil {
+		log.Print("Failed to connect to MongoDB.", err)
+		return err
+	}
+	defer session.Close()
+
+	for _, tag := range tags {
+		err = session.DB("pill").C("skills").RemoveId(tag)
+
+		if err != nil && err != mgo.ErrNotFound {
+			return err
+		}
+	}
+	return nil
 }

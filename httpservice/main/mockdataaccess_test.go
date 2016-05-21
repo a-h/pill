@@ -7,18 +7,20 @@ import (
 )
 
 type mockDataAccess struct {
-	getProfileResponse     func(string) (*dataaccess.Profile, bool, error)
-	getProfileCallCount    int
-	updateProfileResponse  func(update *dataaccess.ProfileUpdate) (*dataaccess.Profile, error)
-	updateProfileCallCount int
-	listSkillTagsResponse  func() ([]string, error)
-	listSkillTagsCallCount int
-	addSkillTagsResponse   func(tags []string) error
-	addSkillTagsCallCount  int
-	deleteProfileResponse  func(emailAddress string) (bool, error)
-	deleteProfileCallCount int
-	listProfilesResponse   func() ([]dataaccess.Profile, error)
-	listProfilesCallCount  int
+	getProfileResponse       func(string) (*dataaccess.Profile, bool, error)
+	getProfileCallCount      int
+	updateProfileResponse    func(update *dataaccess.ProfileUpdate) (*dataaccess.Profile, error)
+	updateProfileCallCount   int
+	listSkillTagsResponse    func() ([]string, error)
+	listSkillTagsCallCount   int
+	addSkillTagsResponse     func(tags []string) error
+	addSkillTagsCallCount    int
+	deleteProfileResponse    func(emailAddress string) (bool, error)
+	deleteProfileCallCount   int
+	listProfilesResponse     func() ([]dataaccess.Profile, error)
+	listProfilesCallCount    int
+	deleteSkillTagsResponse  func(tags []string) error
+	deleteSkillTagsCallCount int
 }
 
 // GetProfile returns a Profile by the email address of the person.
@@ -56,6 +58,11 @@ func (da *mockDataAccess) DeleteProfile(emailAddress string) (bool, error) {
 func (da *mockDataAccess) ListProfiles() ([]dataaccess.Profile, error) {
 	da.listProfilesCallCount++
 	return da.listProfilesResponse()
+}
+
+func (da *mockDataAccess) DeleteSkillTags(tags []string) error {
+	da.deleteSkillTagsCallCount++
+	return da.deleteSkillTagsResponse(tags)
 }
 
 func TestMockRecordsIncrementsAndExecutesFunctions(t *testing.T) {

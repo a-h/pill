@@ -24,9 +24,16 @@ func (sh SkillHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	skillTags, err := sh.DataAccess.ListSkillTags()
 
+	if err != nil {
+		log.Printf("Failed to list skill tags, with error %s", err)
+		http.Error(w, "Failed to list skill tags", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(skillTags); err != nil {
-		log.Print("Failed to marshal the skill tags.", err)
+		log.Printf("Failed to marshall the skill tags, with error %s", err)
+		http.Error(w, "Failed to marshall skill tags", http.StatusInternalServerError)
 	}
 }
