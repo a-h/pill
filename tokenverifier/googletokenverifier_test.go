@@ -1,7 +1,6 @@
 package tokenverifier
 
 import (
-	"encoding/json"
 	"strconv"
 	"testing"
 	"time"
@@ -24,8 +23,7 @@ func TestThatAClaimCanBeUnmarshalled(t *testing.T) {
  "locale": "en"
 }`
 
-	claim := &Claim{}
-	err := json.Unmarshal([]byte(claimJSON), claim)
+	claim, err := NewClaim([]byte(claimJSON))
 
 	if err != nil {
 		t.Fatal("Received an error during unmarshalling. ", err)

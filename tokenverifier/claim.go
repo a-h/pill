@@ -1,5 +1,7 @@
 package tokenverifier
 
+import "encoding/json"
+
 // A Claim represents a subset of fields available in a JWT.
 // See (https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32)
 type Claim struct {
@@ -13,4 +15,11 @@ type Claim struct {
 	Picture       string `json:"picture"`     // e.g. "https://lh4.googleusercontent.com/-kYgzyAWpZzJ/ABCDEFGHI/AAAJKLMNOP/tIXL9Ir44LE/s99-c/photo.jpg",
 	GivenName     string `json:"given_name"`  // e.g. "Test"
 	FamilyName    string `json:"family_name"` // e.g. "User"
+}
+
+// NewClaim creates an instance of a claim from JWT JSON.
+func NewClaim(jwt []byte) (claim *Claim, err error) {
+	claim = &Claim{}
+	err = json.Unmarshal(jwt, claim)
+	return claim, err
 }

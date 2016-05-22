@@ -81,6 +81,7 @@ func handleProfilePost(w http.ResponseWriter, r *http.Request, handler ProfileHa
 	err := r.ParseForm()
 
 	if err != nil {
+		log.Print("Failed to parse the form post.")
 		http.Error(w, "Invalid form post.", http.StatusBadRequest)
 		return
 	}

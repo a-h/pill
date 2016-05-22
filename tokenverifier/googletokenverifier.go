@@ -2,7 +2,6 @@ package tokenverifier
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -38,8 +37,7 @@ func (verifier GoogleTokenVerifier) GetClaim(idToken string) (*Claim, error) {
 		return nil, err
 	}
 
-	claim := &Claim{}
-	err = json.Unmarshal(body, claim)
+	claim, err := NewClaim(body)
 
 	if err != nil {
 		log.Print("Unable to understand the claim received from Google.", err)
