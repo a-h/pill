@@ -103,7 +103,7 @@ func handleProfilePost(w http.ResponseWriter, r *http.Request, handler ProfileHa
 
 		switch category {
 		case "name":
-			skills[group].Skill = r.Form.Get(k)
+			skills[group].Skill = dataaccess.CleanTag(r.Form.Get(k))
 		case "level":
 			level, _ := strconv.Atoi(r.Form.Get(k))
 			skills[group].Level = dataaccess.DreyfusLevel(level)

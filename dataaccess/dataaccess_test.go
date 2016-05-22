@@ -193,3 +193,21 @@ func containsAny(source []string, containsAnyOf []string) bool {
 
 	return false
 }
+
+func TestThatTagsCanBeCleaned(t *testing.T) {
+	cases := []struct {
+		in       string
+		expected string
+	}{
+		{"UPPER", "upper"},
+		{"space in the Tags", "space-in-the-tags"},
+	}
+
+	for _, c := range cases {
+		actual := CleanTag(c.in)
+
+		if actual != c.expected {
+			t.Errorf("Input '%s', Expected '%s', Actual '%s'", c.in, c.expected, actual)
+		}
+	}
+}

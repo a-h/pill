@@ -63,7 +63,7 @@ func handleReportGet(w http.ResponseWriter, r *http.Request, handler ReportHandl
 		// Create a map to speed up lookup.
 		sm := make(map[string]dataaccess.Skill)
 		for _, skill := range profile.Skills {
-			sm[skill.Skill] = skill
+			sm[dataaccess.CleanTag(skill.Skill)] = skill
 		}
 
 		// If we have the skill, put it in the column.
@@ -118,7 +118,7 @@ func getSkillNames(profiles []dataaccess.Profile) []string {
 	skillNames := make([]string, len(m))
 	i := 0
 	for k := range m {
-		skillNames[i] = k
+		skillNames[i] = dataaccess.CleanTag(k)
 		i++
 	}
 

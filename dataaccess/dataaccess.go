@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"gopkg.in/mgo.v2"
@@ -206,4 +207,9 @@ func (da MongoDataAccess) DeleteSkillTags(tags []string) error {
 		}
 	}
 	return nil
+}
+
+// CleanTag lowercases input tags and replaces spaces with hyphens.
+func CleanTag(tag string) string {
+	return strings.Replace(strings.ToLower(tag), " ", "-", -1)
 }

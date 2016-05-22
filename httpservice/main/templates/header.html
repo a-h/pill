@@ -37,6 +37,28 @@
     <link rel="stylesheet" href="/static/tagmanager/tagmanager.css">
     <script src="/static/tagmanager/tagmanager.js"></script>
 
+    <!-- Customise tag display to be lowercase -->
+    <style type="text/css">
+
+    .tm-tag {
+      text-transform: lowercase;
+    }
+    </style>
+
+    <script type="text/javascript">
+      // Prevents people from adding spaces and other unusual elements into tags.
+      function limitTagInput(selector) {
+        $(selector).bind('keypress', function (event) {
+            var regex = new RegExp("^[a-zA-Z0-9\-\.]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+               event.preventDefault();
+               return false;
+            }
+        });
+      }
+    </script>
+
     <!-- Sliders -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.0.2/bootstrap-slider.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.0.2/css/bootstrap-slider.css">

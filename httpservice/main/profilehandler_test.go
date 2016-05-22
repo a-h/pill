@@ -104,7 +104,7 @@ func TestThatAfterAProfileUpdateTheUserIsRedirectedToTheReport(t *testing.T) {
 	form.Add("availability", strconv.Itoa(dataaccess.Amber))
 
 	// Add some skills in.
-	form.Add("name_1", "c#")
+	form.Add("name_1", "C# Development") // This is uppercase on purpose, the handler should lowercase it.
 	form.Add("level_1", "5")
 	form.Add("interest_1", "3")
 
@@ -137,8 +137,18 @@ func TestThatAfterAProfileUpdateTheUserIsRedirectedToTheReport(t *testing.T) {
 		t.Errorf("Expected to receive 2 skills in the data update, but only received %d", len(receivedSkills))
 	}
 
+	expectedSkill := dataaccess.Skill{
+		Skill:    "C# Development",
+		Level:    dataaccess.MasterLevel,
+		Interest: dataaccess.NeitherAgreeNorDisagree,
+	}
+
+	if containsAll(receivedSkills, expectedSkill) {
+		t.Error("A skill with 'C#' (uppercase) should not have been found, the handler should have lowercased it and replaced the space with a hyphen.")
+	}
+
 	expectedSkill1 := dataaccess.Skill{
-		Skill:    "c#",
+		Skill:    "c#-development",
 		Level:    dataaccess.MasterLevel,
 		Interest: dataaccess.NeitherAgreeNorDisagree,
 	}

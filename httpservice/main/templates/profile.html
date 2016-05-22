@@ -13,7 +13,7 @@
 
       <form>
         <div class="form-group">
-          <input type="text" id="skills" name="skills" placeholder="skill" class="form-control" value="{{ .Skills }}"/>
+          <input type="text" id="skills" style="text-transform:lowercase" name="skills" placeholder="skill" class="form-control" value="{{ .Skills }}"/>
         </div>
       </form>
 
@@ -128,11 +128,11 @@
 
         // Make the form change when the skills are modified.
         $("#skills").on('tm:pushed', function(e, tag) {
-          createTableEntry(tag)
+          createTableEntry(tag.toLowerCase())
         });
 
         $("#skills").on('tm:spliced', function(e, tag) {
-          removeTableEntry(tag);
+          removeTableEntry(tag.toLowerCase());
         })
 
         // Configure the exisitng profile controls.
@@ -150,6 +150,8 @@
           $(this).closest("tr").remove();
           toggleForm();
         });
+
+        limitTagInput("#skills");
       });
     </script>
 {{template "footer"}}
