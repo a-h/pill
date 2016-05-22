@@ -19,7 +19,7 @@
             <th>&nbsp;</th>
             <th>Name</th>
             {{ range $skillIndex, $skillName := .SkillNames }}
-              <th>{{$skillName}}</th>
+              <th class="rotate"><div><span>{{$skillName}}</span></div></th>
             {{ end }}
           </tr>
         </thead>
@@ -31,14 +31,14 @@
             {{ range $skillIndex, $skill := .Skills }}
               {{ if $skill }}
               <td data-skill="{{ $skill.Skill }}">
-                <div class="progress skill">
-                  <div class="progress-bar progress-bar-striped" style="width: {{getlevelpc $skill.Level }}%">
-                    <span class="sr-only">Skill Level {{ $skill.Level }}%</span>
+                <div style="overflow : auto;">
+                  <div class="bg-success" style="float : left; height:32px; border : solid 1px #cccccc; width : 14px; margin-right : 2px;">
+                    <div style="border-bottom : solid 1px #cccccc; background-color : #ffffff; height : {{getlevelpc $skill.Level }}%;">
+                    </div>
                   </div>
-                </div>
-                <div class="progress interest">
-                  <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{getlikertpc $skill.Interest }}%">
-                    <span class="sr-only">Interest Level {{ $skill.Interest }}%</span>
+                  <div class="bg-info" style="float : left; height:32px; border : solid 1px #cccccc; width : 14px;">
+                    <div style="border-bottom : solid 1px #cccccc; background-color : #ffffff; height : {{getlikertpc $skill.Interest }}%;">
+                    </div>
                   </div>
                 </div>
               </td>

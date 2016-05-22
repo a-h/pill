@@ -10,6 +10,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
+    <!-- Custom class for table header rotation -->
+    <!-- https://css-tricks.com/rotated-table-column-headers/ -->
+    <style type="text/css">
+    th.rotate {
+      /* Something you can count on */
+      height: 140px;
+      white-space: nowrap;
+    }
+
+    th.rotate > div {
+      transform: rotate(315deg);
+      width: 30px;
+    }
+    th.rotate > div > span {
+      padding: 5px 10px;
+    }
+    </style>
+
     <!-- Sign in -->
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="489512678547-4sjor5burp1vm674nf4qpd7erv34vdpl.apps.googleusercontent.com">

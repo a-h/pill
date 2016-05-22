@@ -32,15 +32,11 @@ func renderTemplate(w http.ResponseWriter, templateName string, model interface{
 
 // Template functions.
 func getlevelpc(a dataaccess.DreyfusLevel) string {
-	return getpc(int(a))
+	return strconv.FormatInt(100-(int64(a)*20), 10)
 }
 
 func getlikertpc(a dataaccess.LikertScale) string {
-	return getpc(int(a))
-}
-
-func getpc(a int) string {
-	return strconv.FormatInt(int64(a)*20, 10)
+	return strconv.FormatInt(100-(int64(a)*20), 10)
 }
 
 func getavailabilitystyle(a dataaccess.RagStatus) string {

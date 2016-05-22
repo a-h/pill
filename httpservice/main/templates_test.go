@@ -22,11 +22,11 @@ func TestGetLevelPcTemplateFunction(t *testing.T) {
 		input    dataaccess.DreyfusLevel
 		expected string
 	}{
-		{dataaccess.NoviceLevel, "20"},
-		{dataaccess.CompetentLevel, "40"},
-		{dataaccess.ProficientLevel, "60"},
-		{dataaccess.ExpertLevel, "80"},
-		{dataaccess.MasterLevel, "100"},
+		{dataaccess.NoviceLevel, "80"},
+		{dataaccess.CompetentLevel, "60"},
+		{dataaccess.ProficientLevel, "40"},
+		{dataaccess.ExpertLevel, "20"},
+		{dataaccess.MasterLevel, "0"},
 	}
 
 	for _, test := range tests {
@@ -60,11 +60,11 @@ func TestGetLikertPcTemplateFunction(t *testing.T) {
 		input    dataaccess.LikertScale
 		expected string
 	}{
-		{dataaccess.StronglyDisagree, "20"},
-		{dataaccess.Disagree, "40"},
-		{dataaccess.NeitherAgreeNorDisagree, "60"},
-		{dataaccess.Agree, "80"},
-		{dataaccess.StronglyAgree, "100"},
+		{dataaccess.StronglyDisagree, "80"},
+		{dataaccess.Disagree, "60"},
+		{dataaccess.NeitherAgreeNorDisagree, "40"},
+		{dataaccess.Agree, "20"},
+		{dataaccess.StronglyAgree, "0"},
 	}
 
 	for _, test := range tests {
