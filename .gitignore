@@ -4,4 +4,4 @@ coverage_*.html
 .vagrant
 *.tfstate*
 *.pem
-main
+httpservice/main/main

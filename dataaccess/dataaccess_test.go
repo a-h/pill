@@ -33,6 +33,10 @@ func TestThatItIsPossibleToSaveAndUpdateAProfile(t *testing.T) {
 		t.Errorf("Expected an email address of %s, was %s.", testEmailAddress, r1.EmailAddress)
 	}
 
+	if r1.Domain != "github.com" {
+		t.Errorf("Expected a domain to be set to 'github.com', but it was %s", r1.Domain)
+	}
+
 	if len(r1.Skills) > 0 {
 		t.Error("Expected the newly created profile to be empty.")
 	}
@@ -269,6 +273,24 @@ func TestThatDeepEqualComparesArrays(t *testing.T) {
 
 		if actual != c.expectedAreEqual {
 			t.Errorf("For inputs %v and %v, deep equal was expected to return %t, but returned %t.", c.a, c.b, c.expectedAreEqual, actual)
+		}
+	}
+}
+
+func TestSplittingEmailAddressesOnDomains(t *testing.T) {
+	cases := []struct {
+		in       string
+		expected string
+	}{
+		{"a-h@GITHUB.com", "github.com"},
+		{"a-h@github.co.uk", "github.co.uk"},
+	}
+
+	for _, c := range cases {
+		actual := getDomain(c.in)
+
+		if actual != c.expected {
+			t.Errorf("For input %s, the expected domain is %s but getDomain returned %s", c.in, c.expected, actual)
 		}
 	}
 }

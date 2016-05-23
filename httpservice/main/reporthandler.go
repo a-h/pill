@@ -26,14 +26,14 @@ func (handler ReportHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func handleReportGet(w http.ResponseWriter, r *http.Request, handler ReportHandler) {
 	log.Printf("Handling Report get.")
 
-	valid, _ := handler.getSession(w, r).ValidateSession()
+	valid, emailAddress := handler.getSession(w, r).ValidateSession()
 	if !valid {
 		return
 	}
 
-	log.Print("The session is valid, rendering the report.")
+	log.Printf("The session is valid, rendering the report for user %s.", emailAddress)
 
-	profiles, err := handler.DataAccess.ListProfiles()
+	profiles, err := handler.DataAccess.ListProfiles(emailAddress)
 
 	if err != nil {
 		msg := "Unable to retrieve the list of profiles."

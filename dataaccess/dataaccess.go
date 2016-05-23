@@ -6,11 +6,12 @@ import (
 	"time"
 
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // The DataAccess interface defines how data is written to the data store.
 type DataAccess interface {
-	ListProfiles() ([]Profile, error)
+	ListProfiles(emailAddress string) ([]Profile, error)
 	GetProfile(emailAddress string) (*Profile, bool, error)
 	UpdateProfile(update *ProfileUpdate) (*Profile, error)
 	DeleteProfile(emailAddress string) (bool, error)
@@ -100,6 +101,7 @@ func (da MongoDataAccess) UpdateProfile(update *ProfileUpdate) (*Profile, error)
 	profile.Availability = update.Availability
 	profile.Version++
 	profile.LastUpdated = time.Unix(time.Now().Unix(), 0)
+	profile.Domain = getDomain(update.EmailAddress)
 
 	_, err = c.UpsertId(profile.EmailAddress, profile)
 
@@ -178,8 +180,8 @@ func (da MongoDataAccess) DeleteProfile(emailAddress string) (bool, error) {
 	return true, nil
 }
 
-// ListProfiles lists all of the profiles stored in the database.
-func (da MongoDataAccess) ListProfiles() ([]Profile, error) {
+// ListProfiles lists all of the profiles that the user has access to (filtered by domain).
+func (da MongoDataAccess) ListProfiles(emailAddress string) ([]Profile, error) {
 	session, err := mgo.Dial(da.connectionString)
 	if err != nil {
 		log.Print("Failed to connect to MongoDB.", err)
@@ -188,7 +190,7 @@ func (da MongoDataAccess) ListProfiles() ([]Profile, error) {
 	defer session.Close()
 
 	var results []Profile
-	err = session.DB(da.databaseName).C("profiles").Find(nil).All(&results)
+	err = session.DB(da.databaseName).C("profiles").Find(bson.M{"domain": getDomain(emailAddress)}).All(&results)
 
 	if err != nil {
 		log.Print("Failed to list profiles.", err)
@@ -196,6 +198,10 @@ func (da MongoDataAccess) ListProfiles() ([]Profile, error) {
 	}
 
 	return results, nil
+}
+
+func getDomain(emailAddress string) string {
+	return strings.ToLower(strings.Split(emailAddress, "@")[1])
 }
 
 // DeleteSkillTags deletes a set of tags from the database.

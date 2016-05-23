@@ -22,6 +22,7 @@ type Profile struct {
 	SkillsHistory []SkillLevel `json:"skillsHistory"`
 	Version       int          `json:"version"`
 	LastUpdated   time.Time    `json:"lastUpdated"`
+	Domain        string       `json:"domain"`
 }
 
 // NewProfile creates an empty profile.

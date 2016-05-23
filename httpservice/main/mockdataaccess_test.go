@@ -52,7 +52,7 @@ func (da *mockDataAccess) DeleteProfile(emailAddress string) (bool, error) {
 	return da.deleteProfileResponse(emailAddress)
 }
 
-func (da *mockDataAccess) ListProfiles() ([]dataaccess.Profile, error) {
+func (da *mockDataAccess) ListProfiles(domain string) ([]dataaccess.Profile, error) {
 	da.listProfilesCallCount++
 	return da.listProfilesResponse()
 }
