@@ -24,26 +24,18 @@ type GorillaSession struct {
 	loginURL url.URL
 }
 
-const sessionName string = "pill-session"
-
-//TODO: Change the implementation to set options.
-/*
-var store = sessions.NewCookieStore([]byte("something-very-secret"))
-
-func init() {
-
-   store.Options = &sessions.Options{
-    Domain:   "localhost",
-    Path:     "/",
-    MaxAge:   3600 * 8, // 8 hours
-    HttpOnly: true,
-}
-*/
+const sessionName string = "pill-session-cookie"
 
 // NewGorillaSession creates a Session which uses Gorilla.
-func NewGorillaSession(w http.ResponseWriter, r *http.Request, encryptionKey []byte, loginURL url.URL) *GorillaSession {
+func NewGorillaSession(w http.ResponseWriter, r *http.Request, encryptionKey []byte, setSecureFlag bool, loginURL url.URL) *GorillaSession {
+	store := sessions.NewCookieStore(encryptionKey)
+	store.Options = &sessions.Options{
+		HttpOnly: true,
+		Secure:   setSecureFlag,
+	}
+
 	return &GorillaSession{
-		store:    *sessions.NewCookieStore(encryptionKey),
+		store:    *store,
 		w:        w,
 		r:        r,
 		loginURL: loginURL,
@@ -54,6 +46,7 @@ func NewGorillaSession(w http.ResponseWriter, r *http.Request, encryptionKey []b
 // encrypted cookie.
 func (gs GorillaSession) StartSession(emailAdress string) {
 	session, err := gs.store.Get(gs.r, sessionName)
+
 	if err != nil {
 		http.Error(gs.w, err.Error(), http.StatusInternalServerError)
 		return

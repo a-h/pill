@@ -49,7 +49,7 @@
       // Prevents people from adding spaces and other unusual elements into tags.
       function limitTagInput(selector) {
         $(selector).bind('keypress', function (event) {
-            var regex = new RegExp("^[a-zA-Z0-9\-\.]+$");
+            var regex = new RegExp("^[a-zA-Z0-9\#\-\.]+$");
             var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
             if (!regex.test(key)) {
                event.preventDefault();

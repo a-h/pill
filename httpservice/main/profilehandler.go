@@ -23,6 +23,8 @@ func NewProfileHandler(da dataaccess.DataAccess, sessionFactory func(w http.Resp
 }
 
 func (handler ProfileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Print("Handling profile HTTP request.")
+
 	if r.Method == http.MethodGet {
 		handleProfileGet(w, r, handler)
 	} else {
@@ -31,7 +33,7 @@ func (handler ProfileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 }
 
 func handleProfileGet(w http.ResponseWriter, r *http.Request, handler ProfileHandler) {
-	log.Printf("Handling Profile get.")
+	log.Print("Handling Profile GET.")
 
 	valid, emailAddress := handler.getSession(w, r).ValidateSession()
 	if !valid {

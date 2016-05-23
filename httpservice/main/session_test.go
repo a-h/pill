@@ -11,7 +11,7 @@ func TestThatInvalidSessionsRedirectToTheHomePage(t *testing.T) {
 	w := httptest.NewRecorder()
 	redirectURL, _ := url.Parse("http://example.com/login")
 	r, _ := http.NewRequest("GET", "http://example.com/secret_area", nil)
-	s := NewGorillaSession(w, r, []byte("random_data"), *redirectURL)
+	s := NewGorillaSession(w, r, []byte("random_data"), false, *redirectURL)
 
 	result, _ := s.ValidateSession()
 
@@ -32,7 +32,7 @@ func TestThatLoginsDoNotLoop(t *testing.T) {
 	w := httptest.NewRecorder()
 	redirectURL, _ := url.Parse("/")
 	r, _ := http.NewRequest("GET", "http://example.com/", nil)
-	s := NewGorillaSession(w, r, []byte("random_data"), *redirectURL)
+	s := NewGorillaSession(w, r, []byte("random_data"), false, *redirectURL)
 
 	result, _ := s.ValidateSession()
 
@@ -50,7 +50,7 @@ func TestThatValidSessionsPassThrough(t *testing.T) {
 	redirectURL, _ := url.Parse("http://example.com/")
 	r, _ := http.NewRequest("GET", "http://example.com/secret_area", nil)
 
-	s := NewGorillaSession(w, r, []byte("random_data"), *redirectURL)
+	s := NewGorillaSession(w, r, []byte("random_data"), false, *redirectURL)
 	s.StartSession("a-h@github.com")
 
 	result, emailAddress := s.ValidateSession()

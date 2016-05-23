@@ -3,6 +3,7 @@ package dataaccess
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 	"strconv"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 
 func TestThatItIsPossibleToSaveAndUpdateAProfile(t *testing.T) {
 	testEmailAddress := "a-h@github.com"
-	da := NewMongoDataAccess("mongodb://localhost:27017")
+	da := NewMongoDataAccess("mongodb://localhost:27017", "pilltest")
 	update := NewProfileUpdate()
 	update.Availability = Red
 	update.EmailAddress = testEmailAddress
@@ -78,7 +79,7 @@ func TestThatItIsPossibleToSaveAndUpdateAProfile(t *testing.T) {
 }
 
 func TestSkillTags(t *testing.T) {
-	da := NewMongoDataAccess("mongodb://localhost:27017")
+	da := NewMongoDataAccess("mongodb://localhost:27017", "pilltest")
 
 	skillTags := []string{"test_tag_" + strconv.Itoa(rand.Int()),
 		"test_tag_" + strconv.Itoa(rand.Int())}
@@ -208,6 +209,66 @@ func TestThatTagsCanBeCleaned(t *testing.T) {
 
 		if actual != c.expected {
 			t.Errorf("Input '%s', Expected '%s', Actual '%s'", c.in, c.expected, actual)
+		}
+	}
+}
+
+func TestThatConfigurationCanBeRecreated(t *testing.T) {
+	da := NewMongoDataAccess("mongodb://localhost:27017", "pilltest")
+
+	// Clean up before testing.
+	err := da.DeleteConfiguration()
+
+	if err != nil {
+		t.Error("Failed to clean up the configuration collection (#1).", err)
+	}
+
+	c1, err := da.GetOrCreateConfiguration()
+
+	if err != nil {
+		t.Fatal("Failed to get or create the configuration (#1).")
+	}
+
+	err = da.DeleteConfiguration()
+
+	if err != nil {
+		t.Error("Failed to clean up the configuration collection (#2).", err)
+	}
+
+	c2, err := da.GetOrCreateConfiguration()
+
+	if err != nil {
+		t.Error("Failed to get the configuration (#2).")
+	}
+
+	if c1.ID != c2.ID {
+		t.Error("The ID value of the configuration entry should always be 'configuration'")
+	}
+
+	if reflect.DeepEqual(c1, c2) {
+		t.Error("After deleting configuration, attempting to create a new configuration entry should result in a random session key being generated.")
+		t.Errorf("Key 1: %v", c1)
+		t.Errorf("Key 2: %v", c2)
+	}
+}
+
+func TestThatDeepEqualComparesArrays(t *testing.T) {
+	cases := []struct {
+		a                []byte
+		b                []byte
+		expectedAreEqual bool
+	}{
+		{[]byte{1, 2, 3}, []byte{1, 2, 3}, true},
+		{[]byte{1, 2}, []byte{1, 2, 3}, false},
+		{[]byte{1, 2, 3}, []byte{1, 2}, false},
+		{nil, []byte{1, 2}, false},
+	}
+
+	for _, c := range cases {
+		actual := reflect.DeepEqual(c.a, c.b)
+
+		if actual != c.expectedAreEqual {
+			t.Errorf("For inputs %v and %v, deep equal was expected to return %t, but returned %t.", c.a, c.b, c.expectedAreEqual, actual)
 		}
 	}
 }
